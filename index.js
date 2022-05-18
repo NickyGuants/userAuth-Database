@@ -1,23 +1,13 @@
-const mysql = require('mysql');
-const config = require('./db');
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const express = require( 'express' );
+const bcrypt = require( 'bcrypt' );
+const jwt = require( 'jsonwebtoken' )
+const { connectDb, connection }= require('./db')
 
 const app = express();
 
 app.use(express.json())
 
-//establish connection to the db and pass in the configuration details
-const connection = mysql.createConnection(config);
-
-//test db connection
-connection.connect((err) => {
-    if (err) {
-        return console.log(err.message);
-    }
-    console.log('Connected to mysql server');
-});
+connectDb( connection );
 
 //Get users from the database
 app.get('/users', async (req, res) => {
@@ -26,7 +16,7 @@ app.get('/users', async (req, res) => {
     if (error) {
       return console.log(error.message);
     }
-    res.status(201).send(results);
+    res.status(200).send(results);
   });;
   
 });
@@ -42,7 +32,7 @@ app.get('/users/:user_id', async (req, res) => {
     if (results.length===0) {
       return res.status(406).send("No user with that id exists");
     } else {
-      return res.status(201).send(results);
+      return res.status(200).send(results);
     }
     
   })
@@ -182,5 +172,4 @@ app.post('/users/login', async (req, res) => {
   }
 }
 )
-
-app.listen(3003);
+module.exports = app;
